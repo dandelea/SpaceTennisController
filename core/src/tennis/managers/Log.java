@@ -43,6 +43,7 @@ public class Log {
 
 	private static StringBuilder sb = new StringBuilder();
 
+	@SuppressWarnings("deprecation")
 	private static void writeToFile(String level, String tag, String msg) {
 		if (logFile != null) {
 			sb.delete(0, sb.length());

@@ -1,35 +1,26 @@
 package tennis.managers;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 
 public class Assets implements Disposable {
 	public static final int MAIN_MENU_SCREEN = 1;
-	public static final int SPLASH_SCREEN_DEVELOPER = 2;
-	public static final int SPLASH_SCREEN_US = 3;
-	public static final int SETTINGS_SCREEN = 4;
-	public static final int GAME_SCREEN = 5;
-	public static TextureAtlas atlas;
-	public static Skin skin;
+	public static final int RULES_SCREEN = 2;
+	public static final int CONNECT_SCREEN = 3;
+
+	public Skin skin;
+	public FreeTypeFontGenerator titleGenerator;
+
 	public AssetManager assetManager;
+
+	public static final String URL_SKIN = "ui/uiskin.json";
+	public static final String URL_FONT1 = "fonts/space_age.ttf";
 
 	public Assets() {
 		assetManager = new AssetManager();
-	}
-
-	public void loadAll() {
-
-		assetManager.load("ui/uiskin.atlas", TextureAtlas.class);
-
-		assetManager.load("ui/uiskin.json", Skin.class);
-		assetManager.finishLoading();
-
-		atlas = assetManager.get("ui/uiskin.atlas");
-		skin = assetManager.get("ui/uiskin.json");
-		Log.info("Finished loading assets");
 	}
 
 	public void loadScreen(int screen) {
@@ -37,41 +28,34 @@ public class Assets implements Disposable {
 		case MAIN_MENU_SCREEN:
 			loadSkin();
 			break;
-		case SPLASH_SCREEN_DEVELOPER:
-			loadTextures();
-			break;
-		case SPLASH_SCREEN_US:
-			loadTextures();
-			break;
-		case SETTINGS_SCREEN:
+		case RULES_SCREEN:
 			loadSkin();
+			loadTextures();
 			break;
-		case GAME_SCREEN:
+		case CONNECT_SCREEN:
 			loadSkin();
 			break;
 		}
 		finish();
-		
-	}
-	
-	private void loadSkin(){
-		assetManager.load("ui/uiskin.atlas", TextureAtlas.class);
-		assetManager.load("ui/uiskin.json", Skin.class);
+		skin = assetManager.get(URL_SKIN);
 
-		atlas = assetManager.get("ui/uiskin.atlas");
-		skin = assetManager.get("ui/uiskin.json");
 	}
-	
-	private void loadTextures(){
-		assetManager.load("img/splash_screen/developer.png", Texture.class);
-		assetManager.load("img/splash_screen/us.png", Texture.class);
+
+	private void loadSkin() {
+		assetManager.load(URL_SKIN, Skin.class);
+		titleGenerator = new FreeTypeFontGenerator(
+				Gdx.files.internal(URL_FONT1));
+	}
+
+	private void loadTextures() {
+
 	}
 
 	public <T> T get(String direction, Class<T> type) {
 		return assetManager.get(direction, type);
 	}
-	
-	private void finish(){
+
+	private void finish() {
 		assetManager.finishLoading();
 	}
 
@@ -79,7 +63,5 @@ public class Assets implements Disposable {
 		assetManager.dispose();
 		if (skin != null)
 			skin.dispose();
-		if (atlas != null)
-			atlas.dispose();
 	}
 }

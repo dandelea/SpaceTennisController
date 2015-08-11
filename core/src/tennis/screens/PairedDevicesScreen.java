@@ -9,13 +9,11 @@ import aurelienribon.tweenengine.Timeline;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenManager;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -47,20 +45,17 @@ public class PairedDevicesScreen implements Screen {
 	@Override
 	public void show() {
 		assets = new Assets();
-		assets.loadAll();
+		assets.loadScreen(Assets.CONNECT_SCREEN);
 
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
 
-		skin = Assets.skin;
-
-		FreeTypeFontGenerator gen = new FreeTypeFontGenerator(
-				Gdx.files.internal("fonts/space age.ttf"));
+		skin = assets.skin;
 
 		table = new Table(skin);
 		table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-		titleFont = gen.generateFont((SpaceTennisController.HEIGHT * 64)
+		titleFont = assets.titleGenerator.generateFont((SpaceTennisController.HEIGHT * 64)
 				/ SpaceTennisController.WIDTH);
 
 		heading = new Label(headingTitle, skin);
@@ -71,8 +66,7 @@ public class PairedDevicesScreen implements Screen {
 		btnExit.addListener(new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				((Game) Gdx.app.getApplicationListener())
-				.setScreen(new MainMenuScreen());
+				SpaceTennisController.goTo(new MainMenuScreen());
 			}
 
 		});

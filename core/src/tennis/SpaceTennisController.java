@@ -5,6 +5,7 @@ import tennis.screens.MainMenuScreen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 
 public class SpaceTennisController extends Game {
 	public static final String TITLE = "Space Tennis Controller";
@@ -40,6 +41,17 @@ public class SpaceTennisController extends Game {
 
 	public void resume() {
 		super.resume();
+	}
+	
+	/**
+	 * Static version of {@link #setScreen(Screen)} . Easier to call
+	 * 
+	 * @param screen
+	 *            Screen to display
+	 */
+	public static void goTo(Screen screen) {
+		Game game = (Game) Gdx.app.getApplicationListener();
+		game.setScreen(screen);
 	}
 
 }

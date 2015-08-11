@@ -19,6 +19,7 @@ public class BluetoothClient {
 	private static BluetoothConnector btConnector;
 	private static BluetoothSocket btSocket;
 	private static DataOutputStream outStream;
+	public static boolean connected;
 	// "00:15:83:0C:BF:EB";
 	private static final UUID BLUETOOTH_SPP_UUID = UUID
 			.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -49,14 +50,33 @@ public class BluetoothClient {
 		} catch (IOException e) {
 			Log.error("Couldnt connect btSocket. " + e.getMessage());
 		}
+		
+		connected = true;
 	}
 	
 	// SEND ACCELEROMETER
 	
-	public static void send(){
+	public static void endConnection(){
+		float message = Float.MAX_VALUE;
+		try {
+			outStream = new DataOutputStream(btSocket.getOutputStream());
+		} catch (IOException e) {
+			Log.error("Fatal Error. Output stream creation failed.  " + e.getMessage());
+		}
+				
+		try {
+			outStream.writeFloat(message);
+		} catch (IOException e) {
+			Log.error("Check that the SPP UUID: "
+					+ BLUETOOTH_SPP_UUID.toString() + " exists on server.\n\n");
+		}
+		connected = false;
+	}
+	
+	public static void sendAccelerometer(){
 		//Assert.assertNotNull("Fatal error. btSocket null", btSocket);
 		//Assert.assertTrue("Fatal error. btSocket not connected", btSocket.isConnected());
-		
+				
 		// Create a data stream so we can talk to server.
 		float curX = Gdx.input.getAccelerometerX();
 		float curY = Gdx.input.getAccelerometerY();
@@ -74,7 +94,7 @@ public class BluetoothClient {
 		curZ = (Math.abs(Gdx.input.getAccelerometerZ()) > 10) ? Math.abs(Gdx.input.getAccelerometerZ())-10 : 0;
 		curZ = (curZ < 0.001) ? 0 : curZ;
 		curZ = (curZ > 20) ? 12 : curZ;*/	
-				
+						
 		try {
 			outStream = new DataOutputStream(btSocket.getOutputStream());
 		} catch (IOException e) {
@@ -88,6 +108,7 @@ public class BluetoothClient {
 		} catch (IOException e) {
 			Log.error("Check that the SPP UUID: "
 					+ BLUETOOTH_SPP_UUID.toString() + " exists on server.\n\n");
+			connected = false;
 		}
 	}
 	
