@@ -48,28 +48,6 @@ public class BluetoothConnector {
         
         while (selectSocket()) {
             adapter.cancelDiscovery();
-            
-            /*try {
-				Method m = device.getClass().getMethod("createRfcommSocket", new Class[] { int.class });
-				try {
-					bluetoothSocket = (BluetoothSocket) m.invoke(device, Integer.valueOf(1));
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (NoSuchMethodException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			} catch (SecurityException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}*/
 
             try {
             	
@@ -80,15 +58,13 @@ public class BluetoothConnector {
             } catch (IOException e) {
                 //try the fallback
                 try {
-                    Thread.sleep(500);          
                     adapter.cancelDiscovery();
                     bluetoothSocket.connect();
                     success = true;
                     break;  
-                } catch (InterruptedException e1) {
-                    Log.w("BT", e1.getMessage(), e1);
                 } catch (IOException e1) {
-                	//bluetoothSocket.connect();
+                	success = false;
+                	BluetoothClient.connection_attempts++;
                     Log.w("BT", "Fallback failed. Cancelling.", e1);
                 }
             }

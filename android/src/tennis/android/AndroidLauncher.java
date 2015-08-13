@@ -25,7 +25,7 @@ public class AndroidLauncher extends AndroidApplication {
 
         // If the adapter is null, then Bluetooth is not supported
         if (btAdapter == null) {
-            Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "ERROR: Bluetooth no disponible", Toast.LENGTH_LONG).show();
             return;
         }
             
@@ -33,7 +33,6 @@ public class AndroidLauncher extends AndroidApplication {
 		config.useAccelerometer = true;
 		initialize(new SpaceTennisController(), config);
 		requestEnable();
-		BluetoothClient.connect();
 	}
 
 	// REQUESTS

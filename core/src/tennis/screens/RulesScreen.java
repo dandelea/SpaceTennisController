@@ -62,7 +62,7 @@ public class RulesScreen implements Screen {
 		rules1.setFontScale(0.75f);
 		rules2 = new Label(RULES2, skin);
 		rules2.setFontScale(0.75f);
-		
+
 		btnExit = new TextButton("Volver", skin);
 		btnExit.pad(20);
 		btnExit.addListener(new ClickListener() {
@@ -77,23 +77,24 @@ public class RulesScreen implements Screen {
 				.colspan(2).row();
 		table.add(rules1).spaceBottom(0.05f * SpaceTennisController.HEIGHT)
 				.row();
-		table.add(rules2).spaceBottom(0.05f * SpaceTennisController.HEIGHT).row();
-		table.add(btnExit);
+		table.add(rules2).row();
+		table.add(btnExit).spaceTop(0.2f * SpaceTennisController.HEIGHT);
 		stage.addActor(table);
 	}
 
 	@Override
 	public void render(float delta) {
 		handleInput();
+		
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
+
 		stage.act(delta);
 		stage.draw();
 	}
-	
+
 	public void handleInput() {
-		if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)){
+		if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
 			SpaceTennisController.goTo(new MainMenuScreen());
 		}
 	}

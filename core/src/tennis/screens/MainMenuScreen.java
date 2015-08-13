@@ -28,7 +28,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.TimeUtils;
 
 public class MainMenuScreen implements Screen {
 
@@ -131,8 +130,6 @@ public class MainMenuScreen implements Screen {
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
 
-		// Animation Fade-In.
-
 		// Heading color animation
 		Timeline.createSequence()
 				.beginSequence()
@@ -162,7 +159,6 @@ public class MainMenuScreen implements Screen {
 
 		tweenManager.update(Gdx.graphics.getDeltaTime());
 
-		time = TimeUtils.nanoTime();
 	}
 
 	public void exitFadeOut() {
@@ -181,9 +177,7 @@ public class MainMenuScreen implements Screen {
 						})).end().start(tweenManager);
 	}
 
-	public long time = 0;
 	float lastHit[] = { 0, 0, 0 };
-
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -240,12 +234,6 @@ public class MainMenuScreen implements Screen {
 		}
 		font2.drawMultiLine(batch, message, 0, SpaceTennisController.HEIGHT);
 		batch.end();
-
-		if (TimeUtils.timeSinceNanos(time) > 100000000
-				&& BluetoothClient.connected) {
-			BluetoothClient.sendAccelerometer();
-			time = TimeUtils.nanoTime();
-		}
 
 		tweenManager.update(delta);
 	}

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import tennis.SpaceTennisController;
 import tennis.managers.Log;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -20,6 +21,8 @@ public class BluetoothClient {
 	private static BluetoothSocket btSocket;
 	private static DataOutputStream outStream;
 	public static boolean connected;
+	public static int connection_attempts = 0;
+	public static final int MAX_CONNECTION_ATTEMPTS = 50;
 	// "00:15:83:0C:BF:EB";
 	private static final UUID BLUETOOTH_SPP_UUID = UUID
 			.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -33,13 +36,9 @@ public class BluetoothClient {
 				// Prefered device: First
 				Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
 				for (BluetoothDevice btDevice: pairedDevices){
-					if (btDevice.getName().equals("DANIDESKTOP"))
-					{
-						preferedDevice = btDevice;
-						Log.info("BT " + preferedDevice.getAddress());
-						break;
-					}
-					
+					preferedDevice = btDevice;
+					Log.info("BT " + preferedDevice.getAddress());
+					break;
 				}
 			}
 			
@@ -47,30 +46,33 @@ public class BluetoothClient {
 			// Establish the connection. This will block until it connects.
 			btSocket = btConnector.connect();
 			Log.info("\n...Connection established and data link opened...");
+			connected = true;
 		} catch (IOException e) {
 			Log.error("Couldnt connect btSocket. " + e.getMessage());
 		}
 		
-		connected = true;
+		
 	}
 	
 	// SEND ACCELEROMETER
 	
 	public static void endConnection(){
-		float message = Float.MAX_VALUE;
-		try {
-			outStream = new DataOutputStream(btSocket.getOutputStream());
-		} catch (IOException e) {
-			Log.error("Fatal Error. Output stream creation failed.  " + e.getMessage());
+		if (connected) {
+			float message = Float.MAX_VALUE;
+			try {
+				outStream = new DataOutputStream(btSocket.getOutputStream());
+			} catch (IOException e) {
+				Log.error("Fatal Error. Output stream creation failed.  " + e.getMessage());
+			}
+					
+			try {
+				outStream.writeFloat(message);
+			} catch (IOException e) {
+				Log.error("Check that the SPP UUID: "
+						+ BLUETOOTH_SPP_UUID.toString() + " exists on server.\n\n");
+			}
+			connected = false;
 		}
-				
-		try {
-			outStream.writeFloat(message);
-		} catch (IOException e) {
-			Log.error("Check that the SPP UUID: "
-					+ BLUETOOTH_SPP_UUID.toString() + " exists on server.\n\n");
-		}
-		connected = false;
 	}
 	
 	public static void sendAccelerometer(){
@@ -110,6 +112,7 @@ public class BluetoothClient {
 					+ BLUETOOTH_SPP_UUID.toString() + " exists on server.\n\n");
 			connected = false;
 		}
+		SpaceTennisController.movement.addValue(curZ);
 	}
 	
 	// REQUEST
@@ -136,6 +139,7 @@ public class BluetoothClient {
 	}
 	
 	public static BluetoothDevice getBTDevice(String deviceName) {
+		connection_attempts = 0;
 		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 		BluetoothDevice device = null;
 		for (BluetoothDevice btDevice: adapter.getBondedDevices()){

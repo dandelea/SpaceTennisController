@@ -10,6 +10,7 @@ public class Assets implements Disposable {
 	public static final int MAIN_MENU_SCREEN = 1;
 	public static final int RULES_SCREEN = 2;
 	public static final int CONNECT_SCREEN = 3;
+	public static final int GAME_SCREEN = 4;
 
 	public Skin skin;
 	public FreeTypeFontGenerator titleGenerator;
@@ -33,6 +34,9 @@ public class Assets implements Disposable {
 			loadTextures();
 			break;
 		case CONNECT_SCREEN:
+			loadSkin();
+			break;
+		case GAME_SCREEN:
 			loadSkin();
 			break;
 		}

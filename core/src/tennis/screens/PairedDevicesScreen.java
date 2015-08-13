@@ -33,7 +33,7 @@ public class PairedDevicesScreen implements Screen {
 	private BitmapFont titleFont;
 	private Label heading;
 
-	private String headingTitle = " Disposisivos\nemparejados";
+	private String headingTitle = "Selecciona \ndispositivo:";
 
 	private TweenManager tweenManager;
 
@@ -81,6 +81,7 @@ public class PairedDevicesScreen implements Screen {
 				public void clicked(InputEvent event, float x, float y) {
 					BluetoothDevice btDevice = BluetoothClient.getBTDevice(device);
 					BluetoothClient.setPreferedDevice(btDevice);
+					SpaceTennisController.goTo(new GameScreen());
 				}
 
 			});
@@ -88,7 +89,7 @@ public class PairedDevicesScreen implements Screen {
 			table.add(btn).spaceBottom(100);
 		}
 		table.row();
-		table.add(btnExit);
+		table.add(btnExit).spaceTop(SpaceTennisController.HEIGHT * 0.2f);
 		stage.addActor(table);
 		
 		// Register Tween Manager
