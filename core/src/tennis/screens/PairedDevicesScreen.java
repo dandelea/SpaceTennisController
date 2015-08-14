@@ -26,20 +26,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class PairedDevicesScreen implements Screen {
 	private Stage stage;
-
-	private Skin skin;
-
 	private Table table;
-	private BitmapFont titleFont;
-	private Label heading;
-
-	private String headingTitle = "Selecciona \ndispositivo:";
-
-	private TweenManager tweenManager;
 
 	private Assets assets;
-	
+	private Skin skin;
+	private BitmapFont titleFont;
+
+	private Label heading;
 	private TextButton btnExit;
+
+	private final static String HEADING = "Selecciona \ndispositivo:";
+
+	private TweenManager tweenManager;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -51,16 +49,16 @@ public class PairedDevicesScreen implements Screen {
 		Gdx.input.setInputProcessor(stage);
 
 		skin = assets.skin;
+		titleFont = assets.titleGenerator
+				.generateFont((SpaceTennisController.HEIGHT * 64)
+						/ SpaceTennisController.WIDTH);
 
 		table = new Table(skin);
 		table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-		titleFont = assets.titleGenerator.generateFont((SpaceTennisController.HEIGHT * 64)
-				/ SpaceTennisController.WIDTH);
-
-		heading = new Label(headingTitle, skin);
+		heading = new Label(HEADING, skin);
 		heading.setStyle(new LabelStyle(titleFont, Color.WHITE));
-		
+
 		btnExit = new TextButton("Volver", skin);
 		btnExit.pad(20);
 		btnExit.addListener(new ClickListener() {
@@ -79,7 +77,8 @@ public class PairedDevicesScreen implements Screen {
 			btn.addListener(new ClickListener() {
 
 				public void clicked(InputEvent event, float x, float y) {
-					BluetoothDevice btDevice = BluetoothClient.getBTDevice(device);
+					BluetoothDevice btDevice = BluetoothClient
+							.getBTDevice(device);
 					BluetoothClient.setPreferedDevice(btDevice);
 					SpaceTennisController.goTo(new GameScreen());
 				}
@@ -91,13 +90,13 @@ public class PairedDevicesScreen implements Screen {
 		table.row();
 		table.add(btnExit).spaceTop(SpaceTennisController.HEIGHT * 0.2f);
 		stage.addActor(table);
-		
-		// Register Tween Manager
-		
+
+		// TWEEN ANIMATION
+
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
 
-		// Heading color animation
+		// HEADING COLOR ANIMATION
 		Timeline.createSequence()
 				.beginSequence()
 				.push(Tween.to(heading, ActorAccessor.RGB, .5f).target(0, 0, 1))
@@ -108,7 +107,7 @@ public class PairedDevicesScreen implements Screen {
 				.push(Tween.to(heading, ActorAccessor.RGB, .5f).target(1, 0, 1))
 				.push(Tween.to(heading, ActorAccessor.RGB, .5f).target(1, 1, 1))
 				.end().repeat(Tween.INFINITY, 0).start(tweenManager);
-		
+
 		tweenManager.update(Gdx.graphics.getDeltaTime());
 	}
 
@@ -119,26 +118,22 @@ public class PairedDevicesScreen implements Screen {
 
 		stage.act(delta);
 		stage.draw();
-		
+
 		tweenManager.update(delta);
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-
+		stage.getViewport().update(width, height, true);
+		table.invalidateHierarchy();
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -149,7 +144,6 @@ public class PairedDevicesScreen implements Screen {
 	@Override
 	public void dispose() {
 		assets.dispose();
-		
 		stage.dispose();
 		skin.dispose();
 		titleFont.dispose();

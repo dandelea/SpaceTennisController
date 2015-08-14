@@ -21,15 +21,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class RulesScreen implements Screen {
 	private Assets assets;
+	private Skin skin;
+	private BitmapFont titleFont;
 
 	private Stage stage;
 	private Table table;
 
-	private BitmapFont titleFont;
-	private Skin skin;
-
-	private Label heading;
-	private Label rules1, rules2;
+	private Label heading, rules1, rules2;
 	private Image image1;
 	private TextButton btnExit;
 
@@ -49,12 +47,11 @@ public class RulesScreen implements Screen {
 		Gdx.input.setInputProcessor(stage);
 
 		skin = assets.skin;
+		titleFont = assets.titleGenerator.generateFont(80);
 
 		table = new Table(skin);
 		table.setFillParent(true);
 
-		// Creating heading
-		titleFont = assets.titleGenerator.generateFont(80);
 		heading = new Label("Cómo conectarse", skin);
 		heading.setStyle(new LabelStyle(titleFont, Color.WHITE));
 
@@ -85,7 +82,7 @@ public class RulesScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		handleInput();
-		
+
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -107,26 +104,22 @@ public class RulesScreen implements Screen {
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
-
+		dispose();
 	}
 
 	@Override
 	public void dispose() {
 		stage.dispose();
 		assets.dispose();
+		skin.dispose();
 		titleFont.dispose();
 	}
 

@@ -27,21 +27,20 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 public class GameScreen implements Screen {
 	private Assets assets;
+	private Skin skin;
+	private BitmapFont titleFont;
 
 	private Stage stage;
 	private Table table;
+
 	private Label label;
 	private TextButton btnExit;
 
-	private BitmapFont titleFont;
-
-	private final String MESSAGE_CONNECTING = "Conectando";
-	private final String MESSAGE_READY = "Listo";
-	private final String MESSAGE_ERROR = "Error:\n\n" + 
-										"- Reinicia la aplicación\nde ordenador.\n" + 
-										"- Error técnico\nde Bluetooth.";
-
-	private Skin skin;
+	private final static String MESSAGE_CONNECTING = "Conectando";
+	private final static String MESSAGE_READY = "Listo";
+	private final static String MESSAGE_ERROR = "Error:\n\n"
+			+ "- Reinicia la aplicación\nde ordenador.\n"
+			+ "- Error técnico\nde Bluetooth.";
 
 	private TweenManager tweenManager;
 
@@ -70,7 +69,7 @@ public class GameScreen implements Screen {
 		btnExit.addListener(new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				BluetoothClient.endConnection();
+				BluetoothClient.specialMessage(BluetoothClient.MESSAGE_END);
 				SpaceTennisController.goTo(new MainMenuScreen());
 			}
 		});
@@ -79,11 +78,11 @@ public class GameScreen implements Screen {
 		table.add(btnExit).spaceTop(SpaceTennisController.HEIGHT * 0.5f);
 		stage.addActor(table);
 
-		// Creating animations
+		// TWEEN ANIMATIONS
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
 
-		// Heading color animation
+		// HEADING COLOR ANIMATION
 		Timeline.createSequence().beginSequence()
 				.push(Tween.to(label, ActorAccessor.RGB, .4f).target(0, 0, 1))
 				.push(Tween.to(label, ActorAccessor.RGB, .4f).target(0, 1, 0))
@@ -94,7 +93,7 @@ public class GameScreen implements Screen {
 				.push(Tween.to(label, ActorAccessor.RGB, .4f).target(1, 1, 1))
 				.end().repeat(Tween.INFINITY, 0).start(tweenManager);
 
-		// table fade-in
+		// TABLE FADE IN
 		Tween.from(table, ActorAccessor.ALPHA, .75f).target(0)
 				.start(tweenManager);
 		Tween.from(table, ActorAccessor.Y, .75f)
@@ -103,7 +102,6 @@ public class GameScreen implements Screen {
 		tweenManager.update(Gdx.graphics.getDeltaTime());
 
 		time = TimeUtils.nanoTime();
-
 		BluetoothClient.connect();
 	}
 
@@ -117,14 +115,15 @@ public class GameScreen implements Screen {
 		stage.act(delta);
 		stage.draw();
 
+		// UPDATE STATE TEXT IN SCREEN
 		if (BluetoothClient.connected) {
 
 			if (TimeUtils.timeSinceNanos(time) > 100000000) {
 				BluetoothClient.sendAccelerometer();
 				time = TimeUtils.nanoTime();
-				if (SpaceTennisController.movement.hasEnoughData()) {
+
+				if (SpaceTennisController.movement.hasEnoughData())
 					label.setText(MESSAGE_READY);
-				}
 			}
 
 		} else {
@@ -135,7 +134,6 @@ public class GameScreen implements Screen {
 				BluetoothClient.connect();
 				label.setText(MESSAGE_CONNECTING);
 			}
-			
 
 		}
 
@@ -143,8 +141,9 @@ public class GameScreen implements Screen {
 	}
 
 	private void handleInput() {
+		// END CONNECTION AND GO BACK
 		if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-			BluetoothClient.endConnection();
+			BluetoothClient.specialMessage(BluetoothClient.MESSAGE_END);
 			SpaceTennisController.goTo(new MainMenuScreen());
 		}
 	}
@@ -156,21 +155,21 @@ public class GameScreen implements Screen {
 	}
 
 	@Override
+	/**
+	 * When android focus lost, we request to pause the game
+	 */
 	public void pause() {
-		// TODO Auto-generated method stub
-
+		BluetoothClient.specialMessage(BluetoothClient.MESSAGE_PAUSE);
+		System.out.println("Pantalla pausada");
 	}
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
-
+		dispose();
 	}
 
 	@Override
@@ -178,6 +177,7 @@ public class GameScreen implements Screen {
 		assets.dispose();
 		stage.dispose();
 		skin.dispose();
+		titleFont.dispose();
 	}
 
 }

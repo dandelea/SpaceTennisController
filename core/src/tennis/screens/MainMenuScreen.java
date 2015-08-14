@@ -12,13 +12,11 @@ import aurelienribon.tweenengine.TweenManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Orientation;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -30,24 +28,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 public class MainMenuScreen implements Screen {
-
+	private Assets assets;
 	private Stage stage;
+	private Table table;
 
 	private Skin skin;
-
-	private Table table;
-	private BitmapFont font2;
 	private BitmapFont titleFont;
-	private Label heading;
-	private SpriteBatch batch;
-	private float highestY = 0.0f;
-	private String message = "Do something already!";
 
-	private Assets assets;
+	private Label heading;
+	private TextButton btnStart, btnRules, btnExit;
 
 	private TweenManager tweenManager;
-
-	private TextButton btnStart, btnRules, btnExit;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -55,14 +46,14 @@ public class MainMenuScreen implements Screen {
 
 		assets = new Assets();
 		assets.loadScreen(Assets.MAIN_MENU_SCREEN);
-		font2 = new BitmapFont();
-
-		batch = new SpriteBatch();
 
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
 
 		skin = assets.skin;
+		titleFont = assets.titleGenerator
+				.generateFont((SpaceTennisController.HEIGHT * 64)
+						/ SpaceTennisController.WIDTH);
 
 		table = new Table(skin);
 		table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -92,15 +83,11 @@ public class MainMenuScreen implements Screen {
 		btnExit.addListener(new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
-				BluetoothClient.endConnection();
+				BluetoothClient.specialMessage(BluetoothClient.MESSAGE_END);
 				exitFadeOut();
 			}
 
 		});
-
-		// Creating heading
-		titleFont = assets.titleGenerator.generateFont((SpaceTennisController.HEIGHT * 64)
-				/ SpaceTennisController.WIDTH);
 
 		heading = new Label("Space Tennis\nController", skin);
 		heading.setStyle(new LabelStyle(titleFont, Color.WHITE));
@@ -112,7 +99,8 @@ public class MainMenuScreen implements Screen {
 		if (BluetoothClient.supportsBluetooth()
 				&& Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer)) {
 
-			table.add(btnStart).spaceBottom(0.05f * SpaceTennisController.HEIGHT).row();
+			table.add(btnStart)
+					.spaceBottom(0.05f * SpaceTennisController.HEIGHT).row();
 
 		} else {
 
@@ -122,15 +110,16 @@ public class MainMenuScreen implements Screen {
 
 		}
 
-		table.add(btnRules).spaceBottom(0.05f * SpaceTennisController.HEIGHT).row();
+		table.add(btnRules).spaceBottom(0.05f * SpaceTennisController.HEIGHT)
+				.row();
 		table.add(btnExit);
 		stage.addActor(table);
 
-		// Creating animations
+		// TWEEN ANIMATION
 		tweenManager = new TweenManager();
 		Tween.registerAccessor(Actor.class, new ActorAccessor());
 
-		// Heading color animation
+		// HEADING COLOR ANIMATION
 		Timeline.createSequence()
 				.beginSequence()
 				.push(Tween.to(heading, ActorAccessor.RGB, .4f).target(0, 0, 1))
@@ -142,7 +131,7 @@ public class MainMenuScreen implements Screen {
 				.push(Tween.to(heading, ActorAccessor.RGB, .4f).target(1, 1, 1))
 				.end().repeat(Tween.INFINITY, 0).start(tweenManager);
 
-		// Heading and buttons fade-in
+		// HEADING AND BUTTONS FADE IN
 		Timeline.createSequence().beginSequence()
 				.push(Tween.set(btnStart, ActorAccessor.ALPHA).target(0))
 				.push(Tween.set(btnExit, ActorAccessor.ALPHA).target(0))
@@ -151,7 +140,7 @@ public class MainMenuScreen implements Screen {
 				.push(Tween.to(btnExit, ActorAccessor.ALPHA, .25f).target(1))
 				.end().start(tweenManager);
 
-		// table fade-in
+		// TABLE FADE IN
 		Tween.from(table, ActorAccessor.ALPHA, .75f).target(0)
 				.start(tweenManager);
 		Tween.from(table, ActorAccessor.Y, .75f)
@@ -161,6 +150,9 @@ public class MainMenuScreen implements Screen {
 
 	}
 
+	/**
+	 * Smoothly exits
+	 */
 	public void exitFadeOut() {
 		Timeline.createParallel()
 				.beginParallel()
@@ -177,7 +169,6 @@ public class MainMenuScreen implements Screen {
 						})).end().start(tweenManager);
 	}
 
-	float lastHit[] = { 0, 0, 0 };
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -186,80 +177,28 @@ public class MainMenuScreen implements Screen {
 		stage.act(delta);
 		stage.draw();
 
-		batch.begin();
-		int deviceAngle = Gdx.input.getRotation();
-		Orientation orientation = Gdx.input.getNativeOrientation();
-		float accelZ = Gdx.input.getAccelerometerZ();
-		if (accelZ > highestY)
-			highestY = accelZ;
-		message = "Device rotated to:" + Integer.toString(deviceAngle)
-				+ " degrees\n";
-		message += "Device orientation is ";
-		switch (orientation) {
-		case Landscape:
-			message += " landscape.\n";
-			break;
-		case Portrait:
-			message += " portrait. \n";
-			break;
-		default:
-			message += " complete crap!\n";
-			break;
-		}
-
-		message += "Device Resolution: "
-				+ Integer.toString(SpaceTennisController.WIDTH) + ","
-				+ Integer.toString(SpaceTennisController.HEIGHT) + "\n";
-		message += "Z axis accel: " + Float.toString(accelZ) + " \n";
-		message += "Highest Y value: " + Float.toString(highestY) + " \n";
-
-		if (Gdx.input.isPeripheralAvailable(Peripheral.Vibrator)) {
-			if (accelZ > 10) {
-				Gdx.input.vibrate((int) delta);
-				lastHit[0] = Gdx.input.getAccelerometerX();
-				lastHit[1] = Gdx.input.getAccelerometerY();
-				lastHit[2] = Gdx.input.getAccelerometerZ();
-			}
-			message += "Last hit: " + lastHit[0] + ", " + lastHit[1] + ", "
-					+ lastHit[2] + "\n";
-		}
-		message += "Accelerometer " + lastHit.toString() + "\n";
-		if (Gdx.input.isPeripheralAvailable(Peripheral.Compass)) {
-			message += "Azmuth:" + Float.toString(Gdx.input.getAzimuth())
-					+ "\n";
-			message += "Pitch:" + Float.toString(Gdx.input.getPitch()) + "\n";
-			message += "Roll:" + Float.toString(Gdx.input.getRoll()) + "\n";
-		} else {
-			message += "No compass available\n";
-		}
-		font2.drawMultiLine(batch, message, 0, SpaceTennisController.HEIGHT);
-		batch.end();
-
 		tweenManager.update(delta);
 	}
 
 	private void handleInput() {
 		if (Gdx.input.isKeyJustPressed(Input.Keys.BACK)) {
-			BluetoothClient.endConnection();
+			BluetoothClient.specialMessage(BluetoothClient.MESSAGE_END);
 			exitFadeOut();
 		}
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
-
+		stage.getViewport().update(width, height, true);
+		table.invalidateHierarchy();
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void resume() {
-
 	}
 
 	@Override
@@ -270,13 +209,10 @@ public class MainMenuScreen implements Screen {
 	@Override
 	public void dispose() {
 		assets.dispose();
-
 		stage.dispose();
 		skin.dispose();
-		font2.dispose();
 		titleFont.dispose();
 
-		batch.dispose();
 	}
 
 }
