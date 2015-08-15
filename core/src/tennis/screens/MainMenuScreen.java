@@ -51,15 +51,18 @@ public class MainMenuScreen implements Screen {
 		Gdx.input.setInputProcessor(stage);
 
 		skin = assets.skin;
-		titleFont = assets.titleGenerator
-				.generateFont((SpaceTennisController.HEIGHT * 64)
-						/ SpaceTennisController.WIDTH);
+		
+		float ratio = SpaceTennisController.WIDTH / 1280f; // Use 1920x1200 as baseline
+		float baseSize = 120;  // for 64 sized fonts at baseline width above define other sizes
+		int size = (int) (baseSize * ratio);
+		titleFont = assets.titleGenerator.generateFont(size);
 
 		table = new Table(skin);
 		table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		btnStart = new TextButton("Conectar", skin);
-		btnStart.pad(20);
+		btnStart.pad(10);
+		btnStart.getLabel().setFontScale(ratio);
 		btnStart.addListener(new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
@@ -69,7 +72,8 @@ public class MainMenuScreen implements Screen {
 		});
 
 		btnRules = new TextButton("Cómo conectarse", skin);
-		btnRules.pad(20);
+		btnRules.pad(10);
+		btnRules.getLabel().setFontScale(ratio);
 		btnRules.addListener(new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
@@ -79,7 +83,8 @@ public class MainMenuScreen implements Screen {
 		});
 
 		btnExit = new TextButton("Salir", skin);
-		btnExit.pad(20);
+		btnExit.pad(10);
+		btnExit.getLabel().setFontScale(ratio);
 		btnExit.addListener(new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {

@@ -18,7 +18,8 @@ import android.util.Log;
  * @version 1
  */
 public class BluetoothConnector {
-	private static final String DEVICE_UUID = "0000110100001000800000805F9B34FB";
+	public static final UUID BLUETOOTH_SPP_UUID = UUID
+			.fromString("00001101-0000-1000-8000-00805F9B34FB");
 	private BluetoothSocket bluetoothSocket;
 	private BluetoothDevice device;
 	private boolean secure;
@@ -47,7 +48,7 @@ public class BluetoothConnector {
 
 		if (this.uuidCandidates == null || this.uuidCandidates.isEmpty()) {
 			this.uuidCandidates = new ArrayList<UUID>();
-			this.uuidCandidates.add(UUID.fromString(DEVICE_UUID));
+			this.uuidCandidates.add(BLUETOOTH_SPP_UUID);
 		}
 	}
 

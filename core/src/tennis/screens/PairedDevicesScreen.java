@@ -49,9 +49,11 @@ public class PairedDevicesScreen implements Screen {
 		Gdx.input.setInputProcessor(stage);
 
 		skin = assets.skin;
-		titleFont = assets.titleGenerator
-				.generateFont((SpaceTennisController.HEIGHT * 64)
-						/ SpaceTennisController.WIDTH);
+		
+		float ratio = SpaceTennisController.WIDTH / 1280f; // Use 1920x1200 as baseline
+		float baseSize = 100;  // for 64 sized fonts at baseline width above define other sizes
+		int size = (int) (baseSize * ratio);
+		titleFont = assets.titleGenerator.generateFont(size);
 
 		table = new Table(skin);
 		table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -60,7 +62,8 @@ public class PairedDevicesScreen implements Screen {
 		heading.setStyle(new LabelStyle(titleFont, Color.WHITE));
 
 		btnExit = new TextButton("Volver", skin);
-		btnExit.pad(20);
+		btnExit.pad(10);
+		btnExit.getLabel().setFontScale(ratio);
 		btnExit.addListener(new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
@@ -73,7 +76,8 @@ public class PairedDevicesScreen implements Screen {
 
 		for (final String device : BluetoothClient.pairedDevices()) {
 			TextButton btn = new TextButton(device, skin);
-			btn.pad(20);
+			btn.pad(10);
+			btn.getLabel().setFontScale(ratio);
 			btn.addListener(new ClickListener() {
 
 				public void clicked(InputEvent event, float x, float y) {
@@ -85,7 +89,7 @@ public class PairedDevicesScreen implements Screen {
 
 			});
 			table.row();
-			table.add(btn).spaceBottom(100);
+			table.add(btn).spaceBottom(SpaceTennisController.HEIGHT * 0.02f);
 		}
 		table.row();
 		table.add(btnExit).spaceTop(SpaceTennisController.HEIGHT * 0.2f);

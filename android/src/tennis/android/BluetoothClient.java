@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import tennis.SpaceTennisController;
 import tennis.managers.Log;
@@ -30,9 +29,6 @@ public class BluetoothClient {
 	public static boolean connected;
 	public static int connection_attempts = 0;
 	public static final int MAX_CONNECTION_ATTEMPTS = 50;
-	private static final UUID BLUETOOTH_SPP_UUID = UUID
-			.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
 	public final static float MESSAGE_END = Float.POSITIVE_INFINITY;
 	public final static float MESSAGE_PAUSE = Float.MAX_VALUE;
 
@@ -94,7 +90,8 @@ public class BluetoothClient {
 			outStream.writeFloat(z);
 		} catch (IOException e) {
 			Log.error("Check that the SPP UUID: "
-					+ BLUETOOTH_SPP_UUID.toString() + " exists on server.\n\n");
+					+ BluetoothConnector.BLUETOOTH_SPP_UUID.toString()
+					+ " exists on server.\n\n");
 			connected = false;
 		}
 		SpaceTennisController.movement.addValue(z);
@@ -115,7 +112,7 @@ public class BluetoothClient {
 				outStream.writeFloat(messageCode);
 			} catch (IOException e) {
 				Log.error("Check that the SPP UUID: "
-						+ BLUETOOTH_SPP_UUID.toString()
+						+ BluetoothConnector.BLUETOOTH_SPP_UUID.toString()
 						+ " exists on server.\n\n");
 			}
 

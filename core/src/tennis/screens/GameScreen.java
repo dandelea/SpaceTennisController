@@ -59,13 +59,18 @@ public class GameScreen implements Screen {
 
 		table = new Table(skin);
 		table.setFillParent(true);
-
-		titleFont = assets.titleGenerator.generateFont(50);
+		
+		float ratio = SpaceTennisController.WIDTH / 1280f; // Use 1920x1200 as baseline
+		float baseSize = 64;  // for 64 sized fonts at baseline width above define other sizes
+		int size = (int) (baseSize * ratio);
+		titleFont = assets.titleGenerator.generateFont(size);
+		
 		label = new Label(MESSAGE_CONNECTING, skin);
 		label.setStyle(new LabelStyle(titleFont, Color.WHITE));
 
 		btnExit = new TextButton("Cancelar", skin);
-		btnExit.pad(20);
+		btnExit.pad(10);
+		btnExit.getLabel().setFontScale(ratio);
 		btnExit.addListener(new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {

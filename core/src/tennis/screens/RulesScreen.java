@@ -31,11 +31,11 @@ public class RulesScreen implements Screen {
 	private Image image1;
 	private TextButton btnExit;
 
-	private static final String RULES1 = "Para conectarte necesitas tener\nun ordenador y un móvil con Bluetooth.";
+	private static final String RULES1 = "Para conectarte necesitas tener un\nordenador y un móvil con Bluetooth.";
 	private static final String RULES2 = "Empareja tu móvil con tu ordenador\n"
 			+ "desde Ajustes de Android. Despues\n"
 			+ "abre el juego en el ordenador y\n"
-			+ " conectate a través de esta aplicación.";
+			+ "conectate a través de esta aplicación.";
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -44,10 +44,15 @@ public class RulesScreen implements Screen {
 		assets.loadScreen(Assets.RULES_SCREEN);
 
 		stage = new Stage();
+		stage.setDebugAll(true);
 		Gdx.input.setInputProcessor(stage);
 
 		skin = assets.skin;
-		titleFont = assets.titleGenerator.generateFont(80);
+		
+		float ratio = SpaceTennisController.WIDTH / 1280f; // Use 1920x1280 as baseline
+		float baseSize = 90;  // for 64 sized fonts at baseline width above define other sizes
+		int size = (int) (baseSize * ratio);
+		titleFont = assets.titleGenerator.generateFont(size);
 
 		table = new Table(skin);
 		table.setFillParent(true);
@@ -55,13 +60,16 @@ public class RulesScreen implements Screen {
 		heading = new Label("Cómo conectarse", skin);
 		heading.setStyle(new LabelStyle(titleFont, Color.WHITE));
 
+		baseSize = 0.6f;
 		rules1 = new Label(RULES1, skin);
-		rules1.setFontScale(0.75f);
+		rules1.setFontScale(baseSize * ratio);
 		rules2 = new Label(RULES2, skin);
-		rules2.setFontScale(0.75f);
+		rules2.setFontScale(baseSize * ratio);
 
+		baseSize = 1f;
 		btnExit = new TextButton("Volver", skin);
-		btnExit.pad(20);
+		btnExit.pad(10);
+		btnExit.getLabel().setFontScale(baseSize * ratio);
 		btnExit.addListener(new ClickListener() {
 
 			public void clicked(InputEvent event, float x, float y) {
@@ -75,7 +83,7 @@ public class RulesScreen implements Screen {
 		table.add(rules1).spaceBottom(0.05f * SpaceTennisController.HEIGHT)
 				.row();
 		table.add(rules2).row();
-		table.add(btnExit).spaceTop(0.2f * SpaceTennisController.HEIGHT);
+		table.add(btnExit).spaceTop(0.2f * SpaceTennisController.HEIGHT).center();
 		stage.addActor(table);
 	}
 
