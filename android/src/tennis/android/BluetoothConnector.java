@@ -1,6 +1,7 @@
 package tennis.android;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -95,7 +96,25 @@ public class BluetoothConnector {
 
 		Log.i("BT", "Attempting to connect to Protocol: " + uuid);
 		if (secure) {
-			tmp = device.createRfcommSocketToServiceRecord(uuid);
+			//tmp = device.createRfcommSocketToServiceRecord(uuid);
+			try {
+				tmp = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device,1);
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else {
 			tmp = device.createInsecureRfcommSocketToServiceRecord(uuid);
 		}

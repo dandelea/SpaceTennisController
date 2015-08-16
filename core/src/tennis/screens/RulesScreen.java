@@ -44,7 +44,6 @@ public class RulesScreen implements Screen {
 		assets.loadScreen(Assets.RULES_SCREEN);
 
 		stage = new Stage();
-		stage.setDebugAll(true);
 		Gdx.input.setInputProcessor(stage);
 
 		skin = assets.skin;
