@@ -165,7 +165,6 @@ public class GameScreen implements Screen {
 	 */
 	public void pause() {
 		BluetoothClient.specialMessage(BluetoothClient.MESSAGE_PAUSE);
-		System.out.println("Pantalla pausada");
 	}
 
 	@Override

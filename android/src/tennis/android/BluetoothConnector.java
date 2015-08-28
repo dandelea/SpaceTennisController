@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import tennis.managers.Log;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.util.Log;
 
 /**
  * Bluetooth Connector manages the connection and UUID discovery in the
@@ -73,14 +73,15 @@ public class BluetoothConnector {
 				} catch (IOException e1) {
 					success = false;
 					BluetoothClient.connection_attempts++;
-					Log.w("BT", "Fallback failed. Cancelling.", e1);
+					Log.error("BT. Fallback failed. Cancelling. " + e1);
 				}
 			}
 		}
 
 		if (!success) {
 			throw new IOException("Could not connect to device: "
-					+ device.getAddress());
+					+ device.getAddress() + ". Attempts: "
+					+ BluetoothClient.connection_attempts);
 		}
 
 		return bluetoothSocket;
@@ -94,11 +95,14 @@ public class BluetoothConnector {
 		BluetoothSocket tmp = null;
 		UUID uuid = uuidCandidates.get(candidate++);
 
-		Log.i("BT", "Attempting to connect to Protocol: " + uuid);
+		Log.info("BT. Attempting to connect to Protocol: " + uuid);
 		if (secure) {
-			//tmp = device.createRfcommSocketToServiceRecord(uuid);
+			// tmp = device.createRfcommSocketToServiceRecord(uuid);
 			try {
-				tmp = (BluetoothSocket) device.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device,1);
+				tmp = (BluetoothSocket) device
+						.getClass()
+						.getMethod("createRfcommSocket",
+								new Class[] { int.class }).invoke(device, 1);
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

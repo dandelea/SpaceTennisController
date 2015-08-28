@@ -13,6 +13,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Peripheral;
 
 /**
  * Bluetooth Client implementation for Space Tennis Controller. Sends
@@ -38,27 +39,19 @@ public class BluetoothClient {
 	 * Start a bluetooth connection with a prefered device
 	 */
 	public static void connect() {
+		assert preferedDevice != null;
+		assert !connected;
 		try {
 
-			if (preferedDevice == null) {
-				// IF NOT SELECTED, PREFERED DEVICE IS FIRST
-				Set<BluetoothDevice> pairedDevices = BluetoothAdapter
-						.getDefaultAdapter().getBondedDevices();
-				for (BluetoothDevice btDevice : pairedDevices) {
-					preferedDevice = btDevice;
-					Log.info("\nPrefered device: "
-							+ preferedDevice.getAddress());
-					break;
-				}
-			}
-
-			btConnector = new BluetoothConnector(preferedDevice, true,
+			btConnector = new BluetoothConnector(preferedDevice, false,
 					BluetoothAdapter.getDefaultAdapter(), null);
+			
 			// ESTABLISH THE CONNECTION. THIS WILL BLOCK THE THREAD UNTIL IT
 			// CONNECTS
 			btSocket = btConnector.connect();
 			Log.info("\n...Connection established and data link opened...");
 			connected = true;
+			
 		} catch (IOException e) {
 			Log.error("\nCouldnt connect btSocket. " + e.getMessage());
 		}
@@ -68,9 +61,13 @@ public class BluetoothClient {
 	// SEND
 
 	/**
-	 * Sends the actual accelerometer coordinates through the bluetooth channel
+	 * Sends the actual accelerometer coordinates through the Bluetooth channel
 	 */
 	public static void sendAccelerometer() {
+		assert btSocket != null && btSocket.isConnected();
+		assert Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
+		assert connected;
+		
 		float x = Gdx.input.getAccelerometerX();
 		float y = Gdx.input.getAccelerometerY();
 		float z = Gdx.input.getAccelerometerZ();
@@ -95,9 +92,13 @@ public class BluetoothClient {
 			connected = false;
 		}
 		SpaceTennisController.movement.addValue(z);
+		if (Math.abs(SpaceTennisController.movement.standardDeviation()) > 5){
+			Gdx.input.vibrate(100);
+		}
 	}
 
 	public static void specialMessage(float messageCode) {
+		
 		if (connected) {
 			// CREATE A DATA STREAM SO WE CAN TALK TO SERVER
 			try {
