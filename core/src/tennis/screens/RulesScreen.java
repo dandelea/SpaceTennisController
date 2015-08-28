@@ -1,8 +1,5 @@
 package tennis.screens;
 
-import tennis.SpaceTennisController;
-import tennis.managers.Assets;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -11,13 +8,15 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+
+import tennis.SpaceTennisController;
+import tennis.managers.Assets;
 
 public class RulesScreen implements Screen {
 	private Assets assets;
@@ -28,7 +27,6 @@ public class RulesScreen implements Screen {
 	private Table table;
 
 	private Label heading, rules1, rules2;
-	private Image image1;
 	private TextButton btnExit;
 
 	private static final String RULES1 = "Para conectarte necesitas tener un\nordenador y un móvil con Bluetooth.";

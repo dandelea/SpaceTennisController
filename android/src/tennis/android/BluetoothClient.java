@@ -32,6 +32,7 @@ public class BluetoothClient {
 	public static final int MAX_CONNECTION_ATTEMPTS = 50;
 	public final static float MESSAGE_END = Float.POSITIVE_INFINITY;
 	public final static float MESSAGE_PAUSE = Float.MAX_VALUE;
+	public final static float MESSAGE_PLAY = Float.MIN_VALUE;
 
 	// CONNECTION
 

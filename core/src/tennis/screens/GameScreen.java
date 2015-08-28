@@ -34,7 +34,7 @@ public class GameScreen implements Screen {
 	private Table table;
 
 	private Label label;
-	private TextButton btnExit;
+	private TextButton btnPlay, btnExit;
 
 	private final static String MESSAGE_CONNECTING = "Conectando";
 	private final static String MESSAGE_READY = "Listo";
@@ -67,6 +67,17 @@ public class GameScreen implements Screen {
 		
 		label = new Label(MESSAGE_CONNECTING, skin);
 		label.setStyle(new LabelStyle(titleFont, Color.WHITE));
+		
+		btnPlay = new TextButton("Jugar", skin);
+		btnPlay.pad(10);
+		btnPlay.getLabel().setFontScale(ratio);
+		btnPlay.addListener(new ClickListener() {
+
+			public void clicked(InputEvent event, float x, float y) {
+				BluetoothClient.specialMessage(BluetoothClient.MESSAGE_PLAY);
+			}
+		});
+		btnPlay.setVisible(false);
 
 		btnExit = new TextButton("Cancelar", skin);
 		btnExit.pad(10);
@@ -80,7 +91,8 @@ public class GameScreen implements Screen {
 		});
 
 		table.add(label).row();
-		table.add(btnExit).spaceTop(SpaceTennisController.HEIGHT * 0.5f);
+		table.add(btnPlay).spaceTop(SpaceTennisController.HEIGHT * 0.3f).row();
+		table.add(btnExit).spaceTop(SpaceTennisController.HEIGHT * 0.2f);
 		stage.addActor(table);
 
 		// TWEEN ANIMATIONS
@@ -127,8 +139,11 @@ public class GameScreen implements Screen {
 				BluetoothClient.sendAccelerometer();
 				time = TimeUtils.nanoTime();
 
-				if (SpaceTennisController.movement.hasEnoughData())
+				if (SpaceTennisController.movement.hasEnoughData()) {
 					label.setText(MESSAGE_READY);
+					btnPlay.setVisible(true);
+				}
+					
 			}
 
 		} else {
@@ -139,6 +154,7 @@ public class GameScreen implements Screen {
 				BluetoothClient.connect();
 				label.setText(MESSAGE_CONNECTING);
 			}
+			btnPlay.setVisible(false);
 
 		}
 
